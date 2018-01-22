@@ -757,7 +757,12 @@ def run_TPI(income_tax_params, tpi_params, iterative_params, small_open_params, 
             Dnew = D
 
         w[:T] = wnew[:T]
-        r[:T] = utils.convex_combo(rnew[:T], r[:T], nu)
+        if small_open:
+            r[:T] = r[:T]
+        else:
+            MC_cap = B[:T] - D[:T] - K[:T]
+        r[:T] = nu * r[:T] + (1 - nu) * (r[:T] - MC_cap)
+        # r[:T] = utils.convex_combo(rnew[:T], r[:T], nu)
         BQ[:T] = utils.convex_combo(BQnew[:T], BQ[:T], nu)
         # D[:T] = utils.convex_combo(Dnew[:T], D[:T], nu)
         D = Dnew
