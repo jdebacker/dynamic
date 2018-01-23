@@ -760,8 +760,12 @@ def run_TPI(income_tax_params, tpi_params, iterative_params, small_open_params, 
         if small_open:
             r[:T] = r[:T]
         else:
-            MC_cap = B[:T] - D[:T] - K[:T]
-        r[:T] = nu * r[:T] + (1 - nu) * (r[:T] - MC_cap)
+            K_params = (Z, gamma, epsilon, delta, tau_b, delta_tau)
+            K_d = firm.get_K(L[:T], r[:T], K_params)
+            MC_cap = B[:T] - D[:T] - K_d
+            print 'MC cap = ', MC_cap[:5]
+            print 'r = ', r[:5]
+            r[:T] = np.maximum(np.ones(T) * 0.001, 0.99 * r[:T] + (1 - 0.99) * (r[:T] - MC_cap))
         # r[:T] = utils.convex_combo(rnew[:T], r[:T], nu)
         BQ[:T] = utils.convex_combo(BQnew[:T], BQ[:T], nu)
         # D[:T] = utils.convex_combo(Dnew[:T], D[:T], nu)
